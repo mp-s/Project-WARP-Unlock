@@ -39,8 +39,10 @@ function Generate_WireGuard_WARP_Profile {
 
     if [[ -f ${WGCF_Profile} ]]; then
         echo -e "[Info] Found ${WGCF_Profile}"
+        cp -f ${WGCF_Profile} /etc/wireguard/wg.conf
     elif [ -f "${WGCF_ProfilePath}" ]; then
         echo -e "[Info] Found ${WGCF_ProfilePath}"
+        cp -f ${WGCF_ProfilePath} /etc/wireguard/wg.conf
     else
         echo -e " [Info] Generating WARP Profile,Please Wait..."
         mkdir ${WGCF_ProfileDir}
@@ -50,9 +52,10 @@ function Generate_WireGuard_WARP_Profile {
         sleep 10
         ${WGCF_ProfileDir}/wgcf generate --config ${WGCF_ProfileDir}/wgcf-account.toml --profile ${WGCF_ProfilePath} >/dev/null 2>&1
         sleep 10
+        cp -f ${WGCF_ProfilePath} /etc/wireguard/wg.conf
     fi
     
-    cp -f ${WGCF_ProfilePath} /etc/wireguard/wg.conf
+
 
     sed -i '7 i Table = off' /etc/wireguard/wg.conf
     sed -i '8 i PostUp = /etc/wireguard/up' /etc/wireguard/wg.conf
