@@ -14,7 +14,7 @@
 
 
 
-一键起飞：`curl -sL https://raw.githubusercontent.com/acacia233/Project-WARP-Unlock/main/run.sh | bash`
+一键起飞：`curl -sL https://raw.githubusercontent.com/mp-s/Project-WARP-Unlock/sub-lite/run.sh | bash`
 
 如果遇到解决不了的问题，欢迎加入Telegram频道：@cutenicobest 探讨
 
