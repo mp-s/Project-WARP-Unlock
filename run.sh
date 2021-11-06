@@ -4,10 +4,10 @@
 
 source /etc/profile
 
+head_url="https://raw.githubusercontent.com/mp-s/Project-WARP-Unlock/sub-lite/"
 function Start {
     echo -e " [Intro] One-Click Unlock Stream Media Script By Cloudflare-WARP"
     echo -e " [Intro] OpenSource-Project:https://github.com/acacia233/Project-WARP-Unlock"
-    echo -e " [Intro] Telegram Channel:https://t.me/cutenicobest"
     echo -e " [Intro] Version:2021-11-03-1"
     echo -e " [Intro] Require Kernel Version > 5.6,Press Ctrl + C to exit..."
     sleep 5
@@ -23,21 +23,37 @@ function Check_System_Depandencies {
 }
 
 function Download_Profile {
-    wget -qO /etc/dnsmasq.d/warp.conf https://raw.githubusercontent.com/acacia233/Project-WARP-Unlock/main/dnsmasq/warp.conf
-    wget -qO /etc/wireguard/up https://raw.githubusercontent.com/acacia233/Project-WARP-Unlock/main/scripts/up
-    wget -qO /etc/wireguard/down https://raw.githubusercontent.com/acacia233/Project-WARP-Unlock/main/scripts/down
+    wget -qO /etc/dnsmasq.d/warp.conf ${head_url}dnsmasq/warp.conf
+    wget -qO /etc/wireguard/up ${head_url}scripts/up
+    wget -qO /etc/wireguard/down ${head_url}scripts/down
     chmod +x /etc/wireguard/up
     chmod +x /etc/wireguard/down
 }
 
 function Generate_WireGuard_WARP_Profile {
-    echo -e " [Info] Generating WARP Profile,Please Wait..."
-    wget -qO /etc/wireguard/wgcf https://github.com/ViRb3/wgcf/releases/download/v2.2.8/wgcf_2.2.8_linux_amd64
-    chmod +x /etc/wireguard/wgcf
-    /etc/wireguard/wgcf register --accept-tos --config /etc/wireguard/wgcf-account.toml >/dev/null 2>&1
-    sleep 10
-    /etc/wireguard/wgcf generate --config /etc/wireguard/wgcf-account.toml --profile /etc/wireguard/wg.conf >/dev/null 2>&1
-    sleep 10
+
+    
+    WGCF_Profile='wgcf-profile.conf'
+    WGCF_ProfileDir="${HOME}/.wgcf"
+    WGCF_ProfilePath="${WGCF_ProfileDir}/${WGCF_Profile}"
+
+    if [[ -f ${WGCF_Profile} ]]; then
+        echo -e "[Info] Found ${WGCF_Profile}"
+    elif [ -f "${WGCF_ProfilePath}" ]; then
+        echo -e "[Info] Found ${WGCF_ProfilePath}"
+    else
+        echo -e " [Info] Generating WARP Profile,Please Wait..."
+        mkdir ${WGCF_ProfileDir}
+        wget -qO ${WGCF_ProfileDir}/wgcf https://github.com/ViRb3/wgcf/releases/download/v2.2.8/wgcf_2.2.8_linux_amd64
+        chmod +x ${WGCF_ProfileDir}/wgcf
+        ${WGCF_ProfileDir}/wgcf register --accept-tos --config ${WGCF_ProfileDir}/wgcf-account.toml >/dev/null 2>&1
+        sleep 10
+        ${WGCF_ProfileDir}/wgcf generate --config ${WGCF_ProfileDir}/wgcf-account.toml --profile ${WGCF_ProfilePath} >/dev/null 2>&1
+        sleep 10
+    fi
+    
+    cp -f ${WGCF_ProfilePath} /etc/wireguard/wg.conf
+
     sed -i '7 i Table = off' /etc/wireguard/wg.conf
     sed -i '8 i PostUp = /etc/wireguard/up' /etc/wireguard/wg.conf
     sed -i '9 i Predown = /etc/wireguard/down' /etc/wireguard/wg.conf
@@ -83,7 +99,6 @@ function Check_finished {
         echo -e " [Error] Routing is not correct,Please check manually!"
     else
         echo -e " [Info] Routing is working normally,Enjoy~"
-        echo -e " [Sponsor] USDT-TRC20:TCXfFzEQ7s968s4XiWzjNGdjuuew3CzLiF"
     fi
 }
 
