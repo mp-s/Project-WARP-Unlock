@@ -56,7 +56,7 @@ function Generate_WireGuard_WARP_Profile {
     fi
     
 
-
+    sed -i 's/DNS.*/&,1.0.0.1,8.8.8.8,8.8.4.4/g' /etc/wireguard/wg.conf
     sed -i '7 i Table = off' /etc/wireguard/wg.conf
     sed -i '8 i PostUp = /etc/wireguard/up' /etc/wireguard/wg.conf
     sed -i '9 i Predown = /etc/wireguard/down' /etc/wireguard/wg.conf
